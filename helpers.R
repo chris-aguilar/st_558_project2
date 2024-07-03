@@ -4,6 +4,7 @@ library(httr)
 library(jsonlite)
 library(tibble)
 library(dplyr)
+library(lubridate)
 
 # We're doing Australian Rules Football!
 
@@ -49,5 +50,40 @@ get_games <- function(year = NULL, ...) {
   parsed_result <- fromJSON(rawToChar(api_return$content))
   
   # putting results into tibble for analysis
-  parsed_result$games |> tibble::as_tibble()
+  parsed_result$games |> 
+    tibble::as_tibble() |> 
+    filter(!is.na(timestr)) |> # dropping games in the future
+    mutate(
+      local_month = month(localtime),
+      local_day = day(localtime),
+      local_dow = wday(localtime, label = TRUE, abbr = TRUE),
+      local_hour = hour(localtime),
+      local_minute = minute(localtime),
+      winner_designation = ifelse(
+        hscore == ascore, "Draw", 
+        ifelse(winner == ateam, 
+               "Away", ifelse(winner == hteam, "Home", NA)))
+    )
+}
+
+
+# Summarizations ----------------------------------------------------------
+
+# game level
+games_2024 <- get_games(year = 2024)
+
+winner_tables <- function(df, type = "winner_designation") {
+switch(type,
+  # question: who wins more, home or away?
+  winner_designation = table(df[, "winner_designation"]) |> sort(decreasing = TRUE),
+  
+  # question: which team wins most so far?
+  winners = table(df[, "winner"]) |> sort(decreasing = TRUE),
+  
+  # question: what home teams win most?
+  home_winners = table(df[, c("hteam", "winner_designation")]),
+  
+  # question: what away team wins most?
+  away_winners = table(df[, c("ateam", "winner_designation")])
+  )
 }
