@@ -72,6 +72,7 @@ get_games <- function(year = NULL, ...) {
 # game level
 games_2024 <- get_games(year = 2024)
 
+# contingency tables
 winner_tables <- function(df, type = "winner_designation") {
 switch(type,
   # question: who wins more, home or away?
@@ -86,4 +87,31 @@ switch(type,
   # question: what away team wins most?
   away_winners = table(df[, c("ateam", "winner_designation")])
   )
+}
+
+# numerical summaries
+
+# scores by winner designation
+games_2024 |> 
+  group_by(winner_designation) |> 
+  summarize(
+            avg_points_scored = mean(hscore),
+            avg_goals_scored = mean(hgoals),
+            avg_behinds_scored = mean(hbehinds),
+            avg_points_allowed = mean(ascore),
+            avg_goals_allowed = mean(agoals),
+            avg_behinds_allowed = mean(abehinds))
+
+# scores by different, preferably univariate groups
+average_scores <- function(df, group_type = winner_designation) {
+  
+  df |>
+    group_by({{group_type}}) |>
+    summarize(
+      avg_points_scored = mean(hscore),
+      avg_goals_scored = mean(hgoals),
+      avg_behinds_scored = mean(hbehinds),
+      avg_points_allowed = mean(ascore),
+      avg_goals_allowed = mean(agoals),
+      avg_behinds_allowed = mean(abehinds))
 }
