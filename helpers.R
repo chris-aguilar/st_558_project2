@@ -72,7 +72,7 @@ get_games <- function(year = NULL, ...) {
 # game level
 games_2024 <- get_games(year = 2024)
 
-# contingency tables
+# CONTINGENCY TABLES
 winner_tables <- function(df, type = "winner_designation") {
 switch(type,
   # question: who wins more, home or away?
@@ -89,19 +89,7 @@ switch(type,
   )
 }
 
-# numerical summaries
-
-# scores by winner designation
-games_2024 |> 
-  group_by(winner_designation) |> 
-  summarize(
-            avg_points_scored = mean(hscore),
-            avg_goals_scored = mean(hgoals),
-            avg_behinds_scored = mean(hbehinds),
-            avg_points_allowed = mean(ascore),
-            avg_goals_allowed = mean(agoals),
-            avg_behinds_allowed = mean(abehinds))
-
+# NUMERICAL SUMMARIES
 # scores by different, preferably univariate groups
 average_scores <- function(df, group_type = winner_designation) {
   
@@ -115,3 +103,140 @@ average_scores <- function(df, group_type = winner_designation) {
       avg_goals_allowed = mean(agoals),
       avg_behinds_allowed = mean(abehinds))
 }
+
+
+# Plots -------------------------------------------------------------------
+
+library(ggplot2)
+
+# univariate numeric
+p <- games_2024 |> ggplot(aes(hscore)) + geom_density()
+p + facet_wrap(~ winner_designation)
+
+univar_plot <- function(df, var, facet_var = NULL, group_var = NULL) {
+  
+  # assign variable to axis
+  p <-  df |>
+    ggplot(aes(get(var)))
+  
+  # set title if no group or facet
+  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste("Density of", var))
+  
+  # assign group to color fill
+  if(!is.null(group_var)) p <- p + aes(fill = get(group_var))
+  
+  # create density plot
+  p <- p + geom_density(alpha=0.5)
+  
+  
+  # create facets as needed
+  if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
+  
+  # assign proper titles
+  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste("Distribution of", var, "by", group_var), subtitle = paste("Facets:", facet_var))
+  if(!is.null(facet_var)) p <- p + labs(title = paste("Distribution of", var, "by", facet_var))
+  if(!is.null(group_var)) p <- p + labs(title = paste("Distribution of", var, "by", group_var), fill = group_var)
+  
+  p + xlab(var)
+}
+
+# scatterplot
+
+scatter_plot <- function(df, x, y, facet_var = NULL, group_var = NULL) {
+  
+  p <- df |>
+    ggplot(aes(get(x), get(y))) 
+  
+  # set title if no group or facet
+  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste(y, "by", x))
+  
+  # assign color to group
+  if(!is.null(group_var)) p <- p + aes(color = get(group_var))
+  
+  # create scatter plot
+  p <- p + geom_point()
+  
+  # create facets as needed
+  if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
+  
+  # assign proper titles
+  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), subtitle = paste("Facets:", facet_var))
+  if(!is.null(facet_var)) p <- p + labs(title = paste(y,"by", x, "for", facet_var))
+  if(!is.null(group_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), color = group_var)
+  p + xlab(x) + ylab(y)
+}
+
+# box plot
+
+box_plot <- function(df, x, y, facet_var = NULL, group_var = NULL) {
+  
+  p <- df |>
+    ggplot(aes(get(x), get(y))) 
+  
+  # set title if no group or facet
+  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste(y, "by", x))
+  
+  # assign color to group
+  if(!is.null(group_var)) p <- p + aes(color = get(group_var))
+  
+  # create scatter plot
+  p <- p + geom_boxplot()
+  
+  # create facets as needed
+  if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
+  
+  # assign proper titles
+  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), subtitle = paste("Facets:", facet_var))
+  if(!is.null(facet_var)) p <- p + labs(title = paste(y,"by", x, "for", facet_var))
+  if(!is.null(group_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), color = group_var)
+  p + xlab(x) + ylab(y)
+}
+
+# bar plot
+bar_plot <- function(df, x, y, facet_var = NULL, group_var = NULL) {
+  
+  p <- df |>
+    ggplot(aes(get(x), get(y))) 
+  
+  # set title if no group or facet
+  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste(y, "by", x))
+  
+  # assign color to group
+  if(!is.null(group_var)) p <- p + aes(fill = get(group_var))
+  
+  # create scatter plot
+  p <- p + geom_col(position="dodge")
+  
+  # create facets as needed
+  if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
+  
+  # assign proper titles
+  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), subtitle = paste("Facets:", facet_var))
+  if(!is.null(facet_var)) p <- p + labs(title = paste(y,"by", x, "for", facet_var))
+  if(!is.null(group_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), fill = group_var)
+  p + xlab(x) + ylab(y)
+  
+}
+
+# heat map
+
+heat_map <- function(df, x, y, z, facet_var = NULL) {
+  
+  p <- df |>
+    ggplot(aes(get(x), get(y), fill = get(z))) 
+  
+  # set title if no group or facet
+  if(is.null(facet_var)) p <- p + labs(title = paste("Heatmap,", z), subtitle = paste(y, "by", x), fill = z)
+  
+  # create scatter plot
+  p <- p + geom_tile()
+  
+  # create facets as needed
+  if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
+  
+  # assign proper titles
+  if(!is.null(facet_var)) p <- p + labs(title = paste("Heatmap,", z), subtitle = paste(y,"by", x, "for", facet_var, "facets"), fill = z)
+  p + xlab(x) + ylab(y)
+  
+}
+
