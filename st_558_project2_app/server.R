@@ -8,11 +8,30 @@
 #
 
 library(shiny)
-
+library(DT)
+source("helpers.R")
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
-
     
+    inputData <- reactive({
+      get_games(year = input$year, team = input$team)
+      }
+    )
+  
+    output$table <- renderDT({
+      
+      inputData()[, input$columns]
+      
+    })
+    
+    output$download <- downloadHandler(
+      filename = function() {
+        paste0(input$team, "_games_", input$year, ".csv")
+        },
+      content = function(file) {
+        readr::write_csv(inputData()[, input$columns], file)
+      }
+    )
 
 }

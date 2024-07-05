@@ -34,14 +34,15 @@ get_teams <- function(...) {
 
 # Endpoint 2: info about one or more games
 # optional parameters: year, round, game id, team id, complete, live
-get_games <- function(year = NULL, ...) {
+get_games <- function(year = NULL, round = NULL, team = NULL, complete = NULL, live = NULL) {
   
   url <- 'https://api.squiggle.com.au/'
   q <- 'games'
   if(is.null(year)) year <- format(Sys.Date(), "%Y") |> as.integer()
   
+  
   # search parameters
-  query <- list(q = q, year = year, ...)
+  query <- list(q = q, year = year, round = round, team = team, complete = complete, live = live)
   
   # api call
   api_return <- GET(url = url, query = query)
