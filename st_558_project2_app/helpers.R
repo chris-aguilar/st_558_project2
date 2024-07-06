@@ -194,28 +194,28 @@ box_plot <- function(df, x, y, facet_var = NULL, group_var = NULL) {
 }
 
 # bar plot
-bar_plot <- function(df, x, y, facet_var = NULL, group_var = NULL) {
+bar_plot <- function(df, y, facet_var = NULL, group_var = NULL) {
   
   p <- df |>
-    ggplot(aes(get(x), get(y))) 
+    ggplot(aes(y = get(y))) 
   
   # set title if no group or facet
-  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste(y, "by", x))
+  if(is.null(group_var) & is.null(facet_var)) p <- p + labs(title = paste("Barplot of", y))
   
   # assign color to group
   if(!is.null(group_var)) p <- p + aes(fill = get(group_var))
   
   # create scatter plot
-  p <- p + geom_col(position="dodge")
+  p <- p + geom_bar(position="dodge")
   
   # create facets as needed
   if(!is.null(facet_var)) p <- p + facet_wrap(vars(get(facet_var)))
   
   # assign proper titles
-  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), subtitle = paste("Facets:", facet_var))
-  if(!is.null(facet_var)) p <- p + labs(title = paste(y,"by", x, "for", facet_var))
-  if(!is.null(group_var)) p <- p + labs(title = paste(y, "by", x, "for", group_var), fill = group_var)
-  p + xlab(x) + ylab(y)
+  if(!is.null(group_var) & !is.null(facet_var)) p <- p + labs(title = paste(y, "for", group_var), subtitle = paste("Facets:", facet_var))
+  if(!is.null(facet_var)) p <- p + labs(title = paste(y, "for", facet_var))
+  if(!is.null(group_var)) p <- p + labs(title = paste(y, "for", group_var), fill = group_var)
+  p + ylab(y)
   
 }
 

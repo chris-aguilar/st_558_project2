@@ -20,6 +20,8 @@ navbarPage("Navbar!",
                              Users can view/download data for a particular season and team at a time, as well as explore match outcomes and scores visually.
                              ## Packages needed
                              Run the following for the packages needed in this app: `install.packages('httr', 'jsonlite', shiny', 'tidyverse', 'lubridate', 'DT', 'markdown')`
+                             ## Running this app remotely
+                             Run the following code to access this app from your R session: `runGitHub('chris-aguilar/st_558_project2', subdir = 'st_558_project2_app')`
                              ")),
            tabPanel("Data Table",
                     sidebarLayout(
@@ -66,8 +68,8 @@ navbarPage("Navbar!",
                         condition = "input.relation == 'univariate'",
                         selectInput(
                           "univariable", "Select variable",
-                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
-                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
+                          c("winner", "abehinds", "agoals", "hgoals", "hbehinds", "hteam", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "round", "winner_designation")
                             ),
                         checkboxGroupInput(
                           "choices", "Plot Options",
@@ -78,14 +80,14 @@ navbarPage("Navbar!",
                         condition = "input.relation == 'bivariate'",
                         selectInput(
                           "x", "X variable",
-                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
-                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
-                          ),
+                          c("winner", "abehinds", "agoals", "hgoals", "hbehinds", "hteam", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "round", "winner_designation")
+                        ),
                         selectInput(
                           "y", "Y variable",
-                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
-                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
-                          ),
+                          c("winner", "abehinds", "agoals", "hgoals", "hbehinds", "hteam", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "round", "winner_designation")
+                        ),
                         checkboxGroupInput(
                           "choices", "Plot Options",
                           c("Group" = "winner_designation", "Facet" = "local_dow")
@@ -94,17 +96,5 @@ navbarPage("Navbar!",
                     ),
                     mainPanel(plotOutput("plot"))
                     )
-                  ),
-           tabPanel("Plot",
-                    sidebarLayout(
-                      sidebarPanel(
-                        radioButtons("plotType", "Plot type",
-                                     c("Scatter"="p", "Line"="l")
-                        )
-                      ),
-                      mainPanel(
-                        plotOutput("plot")
-                      )
-                    )
+                  )
            )
-)

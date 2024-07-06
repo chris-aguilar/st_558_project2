@@ -42,9 +42,46 @@ function(input, output, session) {
     )
     
     output$plot <- renderPlot({
+      
       # plots based on relation type
-
-        univar_plot(expData(), var = input$univariable)
+        if(input$relation == "univariate"){
+          # checking for numeric input variable, then checking for group/facet options
+          if(is.numeric(expData()[[input$univariable]])){
+            if(length(input$choices) == 0) {
+              return(univar_plot(expData(), var = input$univariable))
+            } else if(length(input$choices) == 2) {
+              return(univar_plot(expData(), var = input$univariable, group_var = input$choices[1], facet_var = input$choices[2]))
+            } else {
+              if(input$choices == "winner_designation") {
+                return(univar_plot(expData(), var = input$univariable, group_var = "winner_designation"))
+                } else if(input$choices == "local_dow") {
+                return(univar_plot(expData(), var = input$univariable, facet_var = "local_dow"))
+                }
+              } # same but for categorical variables
+          } else if(length(input$choices) == 0) {
+            return(bar_plot(expData(), y = input$univariable))
+          } else if(length(input$choices) == 2) {
+            return(bar_plot(expData(), y = input$univariable, group_var = input$choices[1], facet_var = input$choices[2]))
+          } else {
+            if(input$choices == "winner_designation") {
+              return(bar_plot(expData(), y = input$univariable, group_var = "winner_designation"))
+            } else if(input$choices == "local_dow") {
+              return(bar_plot(expData(), y = input$univariable, facet_var = "local_dow"))
+            }
+          }
+        }
+      # bivariate plots
+      if(input$relation == "bivariate") {
+        if(is.numeric(expData()[[input$x]]) & is.numeric(expData()[[input$y]])) {
+        return(scatter_plot(expData(), input$x, input$y))
+        } else if(is.character(expData()[[input$x]]) & is.character(expData()[[input$y]])) {
+            return(heat_map(expData(), input$x, input$y, "hscore"))
+        } else {
+            return(box_plot(expData(), input$x, input$y))
+          }
+      }
+      
+      
       
     })
 }
