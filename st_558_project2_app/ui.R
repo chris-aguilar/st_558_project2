@@ -8,43 +8,30 @@
 #
 
 library(markdown)
+library(DT)
 
 navbarPage("Navbar!",
            tabPanel("About", 
                     img(src = "afl_logo.png", align = "top"),
                     markdown("
-                             # About Title
-                             Some text goes **here**.
+                             # Welcome to the Aussie Rules Football Data App!
+                             ## Introduction
+                             This app allows users to pull data from the Aussie Rules Football API found [here.](https://api.squiggle.com.au/#section_games) The data corresponds to the `games` endpoint with parameters `year` and `team`.
+                             Users can view/download data for a particular season and team at a time, as well as explore match outcomes and scores visually.
+                             ## Packages needed
+                             Run the following for the packages needed in this app: `install.packages('httr', 'jsonlite', shiny', 'tidyverse', 'lubridate', 'DT', 'markdown')`
                              ")),
            tabPanel("Data Table",
                     sidebarLayout(
                       sidebarPanel(
                         markdown("## Data options"),
                         sliderInput("year", "Year", 2021, lubridate::year(Sys.Date()), value = 2021),
-                        # numericInput("round", "Round", value = NULL, min = 1, max = 28),
                         selectInput("team", "Team", 
                                     choices = 
-                                      list(ADE = 1, 
-                                           BRI = 2, 
-                                           CAR = 3, 
-                                           COL = 4, 
-                                           ESS = 5, 
-                                           FRE = 6, 
-                                           GEE = 7, 
-                                           GCS = 8, 
-                                           GWS = 9, 
-                                           HAW = 10, 
-                                           MEL = 11, 
-                                           NOR = 12, 
-                                           POR = 13, 
-                                           RIC = 14, 
-                                           STK = 15, 
-                                           SYD = 16, 
-                                           WCE = 17, 
-                                           WBD = 18
-                                    )),
-                        # numericInput("percent", "Percent Complete", value = NULL, min = 0, max = 100),
-                        # numericInput("live", "Live Game Indicator", value = 0, min = 0, max = 1),
+                                      list(ADE = 1, BRI = 2, CAR = 3, COL = 4, ESS = 5, FRE = 6, GEE = 7, GCS = 8, GWS = 9, 
+                                           HAW = 10, MEL = 11, NOR = 12, POR = 13, RIC = 14, STK = 15, SYD = 16, WCE = 17, WBD = 18
+                                           )
+                                    ),
                         checkboxGroupInput("columns", "Columns to Keep",
                                            choices = c("winner", "abehinds", "complete", "id", "localtime", "agoals", 
                                              "date", "hgoals", "venue", "is_final", "hbehinds", "hteam", "hteamid", 
@@ -65,13 +52,20 @@ navbarPage("Navbar!",
            tabPanel("Data Exploration",
                     sidebarLayout(
                       sidebarPanel(
+                        sliderInput("expyear", "Year", 2021, lubridate::year(Sys.Date()), value = 2021),
+                        selectInput("expteam", "Team", 
+                                    choices = 
+                                      list(ADE = 1, BRI = 2, CAR = 3, COL = 4, ESS = 5, FRE = 6, GEE = 7, GCS = 8, GWS = 9, 
+                                           HAW = 10, MEL = 11, NOR = 12, POR = 13, RIC = 14, STK = 15, SYD = 16, WCE = 17, WBD = 18
+                                      )
+                        ),
                         selectInput("relation", "Relationship Type",
                                     c("univariate", "bivariate")
                                     ),
                       conditionalPanel(
                         condition = "input.relation == 'univariate'",
                         selectInput(
-                          "variable", "Select variable",
+                          "univariable", "Select variable",
                           c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
                             "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
                             ),

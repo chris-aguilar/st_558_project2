@@ -14,6 +14,7 @@ source("helpers.R")
 # Define server logic required to draw a histogram
 function(input, output, session) {
     
+    # data table tab
     inputData <- reactive({
       get_games(year = input$year, team = input$team)
       }
@@ -33,5 +34,17 @@ function(input, output, session) {
         readr::write_csv(inputData()[, input$columns], file)
       }
     )
+  
+    # data exploration tab
+    expData <- reactive({
+      get_games(year = input$expyear, team = input$expteam)
+      }
+    )
+    
+    output$plot <- renderPlot({
+      # plots based on relation type
 
+        univar_plot(expData(), var = input$univariable)
+      
+    })
 }
