@@ -65,11 +65,42 @@ navbarPage("Navbar!",
            tabPanel("Data Exploration",
                     sidebarLayout(
                       sidebarPanel(
-                        "Data Options"
+                        selectInput("relation", "Relationship Type",
+                                    c("univariate", "bivariate")
+                                    ),
+                      conditionalPanel(
+                        condition = "input.relation == 'univariate'",
+                        selectInput(
+                          "variable", "Select variable",
+                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
+                            ),
+                        checkboxGroupInput(
+                          "choices", "Plot Options",
+                          c("Group" = "winner_designation", "Facet" = "local_dow")
+                          )
                         ),
-                      mainPanel("Contents")
+                      conditionalPanel(
+                        condition = "input.relation == 'bivariate'",
+                        selectInput(
+                          "x", "X variable",
+                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
+                          ),
+                        selectInput(
+                          "y", "Y variable",
+                          c("winner", "abehinds", "agoals", "hgoals", "venue", "hbehinds", "hteam", "hteamid", "hscore",
+                            "unixtime", "ascore", "roundname", "ateam", "tz", "round", "ateamid", "winner_designation")
+                          ),
+                        checkboxGroupInput(
+                          "choices", "Plot Options",
+                          c("Group" = "winner_designation", "Facet" = "local_dow")
+                        )
                       )
                     ),
+                    mainPanel(plotOutput("plot"))
+                    )
+                  ),
            tabPanel("Plot",
                     sidebarLayout(
                       sidebarPanel(
