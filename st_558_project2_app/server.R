@@ -1,17 +1,9 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
 
 library(shiny)
 library(DT)
 source("helpers.R")
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw univariate and bivariate plots w/ group, facet options
 function(input, output, session) {
     
     # data table tab
@@ -70,7 +62,7 @@ function(input, output, session) {
             }
           }
         }
-      # bivariate plots
+      # bivariate plots, no grouping or faceting due to time constraints
       if(input$relation == "bivariate") {
         if(is.numeric(expData()[[input$x]]) & is.numeric(expData()[[input$y]])) {
         return(scatter_plot(expData(), input$x, input$y))
@@ -81,7 +73,7 @@ function(input, output, session) {
           }
       }
       
-      
+      # No numeric summaries or contingency tables due to time constraints but those functions exist in the helpers.R file!
       
     })
 }

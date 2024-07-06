@@ -70,9 +70,6 @@ get_games <- function(year = NULL, round = NULL, team = NULL, complete = NULL, l
 
 # Summarizations ----------------------------------------------------------
 
-# game level
-games_2024 <- get_games(year = 2024)
-
 # CONTINGENCY TABLES
 winner_tables <- function(df, type = "winner_designation") {
 switch(type,
@@ -109,10 +106,6 @@ average_scores <- function(df, group_type = winner_designation) {
 # Plots -------------------------------------------------------------------
 
 library(ggplot2)
-
-# univariate numeric
-p <- games_2024 |> ggplot(aes(hscore)) + geom_density()
-p + facet_wrap(~ winner_designation)
 
 univar_plot <- function(df, var, facet_var = NULL, group_var = NULL) {
   
